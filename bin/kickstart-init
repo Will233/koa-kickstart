@@ -1,0 +1,66 @@
+#!/usr/bin/env node
+'use strict'
+console.log('init')
+var program = require('commander')
+const chalk = require('chalk')
+const ora = require('ora')
+const exec = require('child_process').exec
+const os = require('os')
+
+const officialTemplateGitRepo = 'https://github.com/Will233/oh-flash.git'
+program
+  .usage('<template-name> [project-name]')
+  .option('-c, --clone', 'use git clone')
+  .option('--offline', 'use cached template')
+
+
+program.on('--help', () => {
+  console.log(' Examples:')
+  console.log()
+  console.log(chalk.gray('  # create a new project with an official template'))
+  console.log(' $kickstart init my-project-name')
+  console.log()
+})
+
+function help () {
+  program.parse(process.argv)
+  if (program.args.length < 1) return program.help()
+}
+
+help()
+
+let template = program.args[0]
+
+console.log(chalk.green(' your template name is : ' + template))
+
+const home = os.homedir()
+console.log(home)
+// const tmp = 
+downloadAndGenerate(template)
+
+function downloadAndGenerate (template) {
+  const spinner = ora('pretend downloading something...')
+  spinner.start()
+  // 开始加载模板资源
+  // git repo 
+  setTimeout(function () {
+    spinner.stop()
+    console.log('pretend downloading finished...')
+  }, 5000)
+
+  // 加载完资源后运行处理过程
+  // 构造git 命令
+
+
+  let gitCmd = `git clone ${officialTemplateGitRepo} ${template}`
+  console.log(chalk.white('\n Start generating ...'))
+  exec(gitCmd, (error, stdout, stderr) => {
+    if (error) {
+      console.log(chalk.red(error))
+      process.exit()
+    }
+    console.log(chalk.green('\n  Generate completed!'))
+    console.log(`\n cd ${template} && npm install \n`)
+    process.exit()
+  })
+}
