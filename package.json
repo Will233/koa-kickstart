@@ -1,0 +1,31 @@
+{
+  "name": "koa-kickstart",
+  "version": "1.0.0",
+  "description": "a koa.js scaffolding tool",
+  "bin": {
+    "kickstart": "bin/kickstart",
+    "kickstart-init": "bin/kickstart-init"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Will233/koa-kickstart.git"
+  },
+  "scripts": {
+    "start": "node wx.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "will233",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^2.3.0",
+    "co": "^4.6.0",
+    "co-prompt": "^1.0.0",
+    "commander": "^2.11.0",
+    "koa": "^2.3.0",
+    "ora": "^1.3.0"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=6.0.0"
+  }
+}
