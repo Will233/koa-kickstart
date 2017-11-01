@@ -1,66 +1,59 @@
 #!/usr/bin/env node
 'use strict'
-console.log('init')
-var program = require('commander')
+// var program = require('commander')
 const chalk = require('chalk')
 const ora = require('ora')
 const exec = require('child_process').exec
 const os = require('os')
+const config = require('../template')
+const co = require('co')
+const prompt = require('co-prompt')
 
-const officialTemplateGitRepo = 'https://github.com/Will233/oh-flash.git'
-program
-  .usage('<template-name> [project-name]')
-  .option('-c, --clone', 'use git clone')
-  .option('--offline', 'use cached template')
-
-
-program.on('--help', () => {
-  console.log(' Examples:')
-  console.log()
-  console.log(chalk.gray('  # create a new project with an official template'))
-  console.log(' $kickstart init my-project-name')
-  console.log()
-})
+// 下载模板
+function downloadAndGenerate (project, gitUrl, branch) {
+  // 加载完资源后运行处理过程
+  // 构造git 命令
+  let gitCmd = `git clone ${gitUrl} ${project} && cd ${project} && git checkout ${branch}`
+  console.log(chalk.white('Start generating ...'))
+  const spinner = ora(`downloading ${gitUrl} ...`)
+  spinner.start()
+  try {
+    exec(gitCmd, (error, stdout, stderr) => {
+      if (error) {
+        console.log(chalk.red(error))
+        process.exit()
+      }
+      spinner.stop()
+      console.log(chalk.green('Generate completed!'))
+      console.log(chalk.yellow(`cd ${project} && npm install \n`))
+      process.exit()
+    })
+  } catch (e) {
+    spinner.stop()
+    console.log(chalk.red(e))
+    process.exit()
+  }
+}
 
 function help () {
-  program.parse(process.argv)
-  if (program.args.length < 1) return program.help()
+  // program.parse(process.argv)
+  // if (program.args.length < 1) return program.help()
 }
 
 help()
 
-let template = program.args[0]
-
-console.log(chalk.green(' your template name is : ' + template))
-
-const home = os.homedir()
-console.log(home)
-// const tmp = 
-downloadAndGenerate(template)
-
-function downloadAndGenerate (template) {
-  const spinner = ora('pretend downloading something...')
-  spinner.start()
-  // 开始加载模板资源
-  // git repo 
-  setTimeout(function () {
-    spinner.stop()
-    console.log('pretend downloading finished...')
-  }, 5000)
-
-  // 加载完资源后运行处理过程
-  // 构造git 命令
-
-
-  let gitCmd = `git clone ${officialTemplateGitRepo} ${template}`
-  console.log(chalk.white('\n Start generating ...'))
-  exec(gitCmd, (error, stdout, stderr) => {
-    if (error) {
-      console.log(chalk.red(error))
-      process.exit()
-    }
-    console.log(chalk.green('\n  Generate completed!'))
-    console.log(`\n cd ${template} && npm install \n`)
+// 处理用户输入参数
+co(function *() {
+  let tplName = yield prompt('Template name: ')
+  let projectName = yield prompt('Project name: ')
+  if (!config.template[tplName]) {
+    console.log(chalk.red('Template does not exist!\n'))
     process.exit()
-  })
-}
+  }
+  let gitUrl = config.template[tplName].gitUrl
+  let branch = config.template[tplName].branch
+  downloadAndGenerate(projectName, gitUrl, branch)
+})
+
+
+
