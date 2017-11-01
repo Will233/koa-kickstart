@@ -1,0 +1,45 @@
+#!/usr/bin/env node
+'use strict'
+const co = require('co')
+const prompt = require('co-prompt')
+const config = require('../template')
+const chalk = require('chalk')
+const fs = require('fs')
+
+co(function *() {
+  let tplName = yield prompt('input template name: ')
+  if (tplName == null || tplName.length < 1) {
+    tplName = yield prompt('Template name cannot be null, please input template name again: ')
+  }
+  let gitUrl = yield prompt('input git repo url : ')
+  if (gitUrl == null || gitUrl.length < 1) {
+    gitUrl = yield prompt('Template git repo url cannot be null, please input git url again: ')
+  }
+  let branch = yield prompt('input git branch: ')
+  if (branch == null || branch.length < 1) {
+    console.log(chalk.gray('default branch: master'))
+    branch = 'master'
+  }
+  // 检查该模板是否已经存在
+  if (!config.template[tplName]) {
+    config.template[tplName] = {}
+    config.template[tplName]['gitUrl'] = gitUrl
+    config.template[tplName]['branch'] = branch
+  } else {
+    console.log(chalk.red('Template has already existed!'))
+    process.exit()
+  }
+
+  // 模板写入
+  fs.writeFile(__dirname + '/../template.json', JSON.stringify(config), 'utf-8', (err) => {
+    if (err) {
+      console.log(err)
+    } else {
+      console.log(chalk.green('New template added!\n'))
+      console.log(chalk.grey('Template list is : \n'))
+      console.log(config.template)
+      console.log('\n')
+      process.exit()
+    }
+  })
+})
