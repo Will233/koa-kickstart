@@ -4,7 +4,10 @@
   "description": "a koa.js scaffolding tool",
   "bin": {
     "kickstart": "bin/kickstart",
-    "kickstart-init": "bin/kickstart-init"
+    "kickstart-init": "bin/kickstart-init",
+    "kickstart-add": "bin/kickstart-add",
+    "kickstart-remove": "bin/kickstart-remove",
+    "kickstart-list": "bin/kickstart-list"
   },
   "repository": {
     "type": "git",
