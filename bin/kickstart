@@ -11,7 +11,10 @@ const program = require('commander')
 program
   .version(require('../package').version)
   .usage('<command> [options]')
+  .command('add', 'add new template')
   .command('init', 'generate a new project from a template')
+  .command('list', 'list all templates')
+  .command('remove', 'remove a template')
   .parse(process.argv)
 
 
